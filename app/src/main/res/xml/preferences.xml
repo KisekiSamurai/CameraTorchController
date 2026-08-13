@@ -8,7 +8,7 @@
         android:key="category_general"
         android:title="基本设置">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="enabled"
             android:title="启用模块"
             android:summary="开启后相机启动时自动开启手电筒"
@@ -16,7 +16,7 @@
             android:icon="@drawable/ic_flashlight"
             app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="auto_close_camera"
             android:title="关闭手电筒时同时关闭相机"
             android:summary="点击通知关闭手电筒时，同时退出相机应用"
