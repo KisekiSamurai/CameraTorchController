@@ -18,10 +18,14 @@ public class Constants {
     public static final String[] TARGET_CAMERA_APPS = {
         "com.android.camera",
         "com.xiaomi.camera",
+        "com.xiaomi.camera.experimental",
+        "com.miui.camera",
         "com.samsung.android.camera",
         "com.google.android.GoogleCamera",
         "com.oppo.camera",
-        "com.vivo.camera"
+        "com.vivo.camera",
+        "com.huawei.camera",
+        "com.android.camera2"
     };
 
     // 日志标签

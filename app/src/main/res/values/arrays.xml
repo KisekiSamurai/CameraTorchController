@@ -4,11 +4,14 @@
     <string-array name="xposed_scope">
         <item>com.android.camera</item>
         <item>com.xiaomi.camera</item>
+        <item>com.xiaomi.camera.experimental</item>
+        <item>com.miui.camera</item>
         <item>com.samsung.android.camera</item>
         <item>com.google.android.GoogleCamera</item>
         <item>com.oppo.camera</item>
         <item>com.vivo.camera</item>
         <item>com.huawei.camera</item>
+        <item>com.android.camera2</item>
     </string-array>
 
     <!-- 手电筒模式选项 -->

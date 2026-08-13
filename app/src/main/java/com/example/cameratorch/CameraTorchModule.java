@@ -22,8 +22,11 @@ public class CameraTorchModule implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
+        XposedBridge.log(Constants.TAG + " Module loaded in package: " + lpparam.packageName);
+
         // 只Hook目标相机应用
         if (!isTargetCameraApp(lpparam.packageName)) {
+            XposedBridge.log(Constants.TAG + " Not a target camera app, skipping");
             return;
         }
 
