@@ -14,11 +14,13 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import android.app.AndroidAppHelper;
+import android.app.Activity;
 
 public class CameraTorchModule implements IXposedHookLoadPackage {
 
     private static CameraManager cameraManager;
     private static String currentCameraId;
+    private static boolean torchEnabled = false;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
@@ -33,7 +35,8 @@ public class CameraTorchModule implements IXposedHookLoadPackage {
         XposedBridge.log(Constants.TAG + " Hooking package: " + lpparam.packageName);
 
         try {
-            hookCameraOpen(lpparam);
+            // Hook Camera Activity 的 onResume 方法
+            hookCameraActivity(lpparam);
         } catch (Exception e) {
             XposedBridge.log(Constants.TAG + " Failed to hook: " + e.getMessage());
         }
@@ -48,95 +51,92 @@ public class CameraTorchModule implements IXposedHookLoadPackage {
         return false;
     }
 
-    private void hookCameraOpen(XC_LoadPackage.LoadPackageParam lpparam) {
-        XposedHelpers.findAndHookMethod(
-            "android.hardware.camera2.CameraManager",
-            lpparam.classLoader,
-            "openCamera",
-            String.class,
-            android.hardware.camera2.CameraDevice.StateCallback.class,
-            android.os.Handler.class,
-            new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    try {
-                        // 检查模块是否启用
-                        if (!isModuleEnabled()) {
-                            XposedBridge.log(Constants.TAG + " Module disabled");
-                            return;
-                        }
+    private void hookCameraActivity(XC_LoadPackage.LoadPackageParam lpparam) {
+        // 尝试Hook不同的Camera Activity类名
+        String[] cameraActivityClasses = {
+            "com.android.camera.Camera",
+            "com.android.camera.ActivityBase",
+            "android.app.Activity"
+        };
 
-                        // 获取CameraManager实例
-                        cameraManager = (CameraManager) param.thisObject;
-                        currentCameraId = (String) param.args[0];
-
-                        XposedBridge.log(Constants.TAG + " Camera opened: " + currentCameraId);
-
-                        // 在主线程中执行手电筒操作
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            try {
-                                // 开启手电筒
-                                if (enableFlashlight()) {
-                                    // 显示通知
-                                    showNotification();
-                                    XposedBridge.log(Constants.TAG + " Flashlight enabled successfully");
-                                }
-                            } catch (Exception e) {
-                                XposedBridge.log(Constants.TAG + " Error enabling flashlight: " + e.getMessage());
+        for (String className : cameraActivityClasses) {
+            try {
+                Class<?> cameraClass = XposedHelpers.findClass(className, lpparam.classLoader);
+                XposedHelpers.findAndHookMethod(cameraClass, "onResume", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        try {
+                            if (!isModuleEnabled()) {
+                                XposedBridge.log(Constants.TAG + " Module disabled");
+                                return;
                             }
-                        });
 
-                    } catch (Exception e) {
-                        XposedBridge.log(Constants.TAG + " Error in hook: " + e.getMessage());
+                            Activity activity = (Activity) param.thisObject;
+                            XposedBridge.log(Constants.TAG + " Camera Activity resumed: " + activity.getClass().getName());
+
+                            // 延迟执行，确保相机已初始化
+                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                try {
+                                    enableFlashlightWithDelay();
+                                } catch (Exception e) {
+                                    XposedBridge.log(Constants.TAG + " Error: " + e.getMessage());
+                                }
+                            }, 500);
+
+                        } catch (Exception e) {
+                            XposedBridge.log(Constants.TAG + " Error in hook: " + e.getMessage());
+                        }
                     }
-                }
+                });
+                XposedBridge.log(Constants.TAG + " Successfully hooked: " + className);
+                break; // 成功Hook一个就退出
+            } catch (Exception e) {
+                XposedBridge.log(Constants.TAG + " Failed to hook " + className + ": " + e.getMessage());
             }
-        );
+        }
     }
 
-    private boolean enableFlashlight() {
+    private void enableFlashlightWithDelay() {
         try {
-            if (cameraManager != null && currentCameraId != null) {
-                // 检查闪光灯是否支持
-                if (isFlashlightSupported()) {
-                    cameraManager.setTorchMode(currentCameraId, true);
-                    return true;
-                } else {
-                    XposedBridge.log(Constants.TAG + " Flashlight not supported for camera: " + currentCameraId);
+            Context context = AndroidAppHelper.currentApplication();
+            if (context != null) {
+                cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+                if (cameraManager != null) {
+                    // 获取后置相机ID
+                    String[] cameraIds = cameraManager.getCameraIdList();
+                    for (String id : cameraIds) {
+                        CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(id);
+                        Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                        if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
+                            currentCameraId = id;
+                            Boolean flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                            if (flashAvailable != null && flashAvailable) {
+                                cameraManager.setTorchMode(currentCameraId, true);
+                                torchEnabled = true;
+                                XposedBridge.log(Constants.TAG + " Flashlight enabled on camera: " + currentCameraId);
+                                showNotification();
+                                return;
+                            }
+                        }
+                    }
+                    XposedBridge.log(Constants.TAG + " No camera with flash found");
                 }
             }
-        } catch (CameraAccessException e) {
-            XposedBridge.log(Constants.TAG + " Camera access error: " + e.getMessage());
-        } catch (SecurityException e) {
-            XposedBridge.log(Constants.TAG + " Security exception: " + e.getMessage());
+        } catch (Exception e) {
+            XposedBridge.log(Constants.TAG + " Error enabling flashlight: " + e.getMessage());
         }
-        return false;
     }
 
     public static void disableFlashlight() {
         try {
-            if (cameraManager != null && currentCameraId != null) {
+            if (cameraManager != null && currentCameraId != null && torchEnabled) {
                 cameraManager.setTorchMode(currentCameraId, false);
+                torchEnabled = false;
                 XposedBridge.log(Constants.TAG + " Flashlight disabled");
             }
-        } catch (CameraAccessException e) {
+        } catch (Exception e) {
             XposedBridge.log(Constants.TAG + " Error disabling flashlight: " + e.getMessage());
         }
-    }
-
-    private boolean isFlashlightSupported() {
-        try {
-            if (cameraManager != null && currentCameraId != null) {
-                CameraCharacteristics characteristics =
-                    cameraManager.getCameraCharacteristics(currentCameraId);
-                Boolean flashAvailable = characteristics.get(
-                    CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                return flashAvailable != null && flashAvailable;
-            }
-        } catch (CameraAccessException e) {
-            XposedBridge.log(Constants.TAG + " Error checking flashlight support: " + e.getMessage());
-        }
-        return false;
     }
 
     private boolean isModuleEnabled() {
@@ -150,7 +150,7 @@ public class CameraTorchModule implements IXposedHookLoadPackage {
         } catch (Exception e) {
             XposedBridge.log(Constants.TAG + " Error checking module status: " + e.getMessage());
         }
-        return true; // 默认启用
+        return true;
     }
 
     private void showNotification() {
