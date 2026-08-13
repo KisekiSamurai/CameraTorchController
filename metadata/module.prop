@@ -2,9 +2,9 @@
 name=CameraTorchController
 version=1.0
 versionCode=1
-author=CameraTorchController Team
+author=Kiseki
 description=相机启动自动开启手电筒，通知栏一键关闭
-updateUrl=https://github.com/yourusername/CameraTorchController/releases
+updateUrl=https://github.com/KisekiSamurai/CameraTorchController/releases
 
 # 兼容性信息
 minLsposedVersion=1.9.0
@@ -19,5 +19,5 @@ tags=相机,手电筒,自动化,通知
 license=GPL-3.0
 
 # 项目链接
-sourceCode=https://github.com/yourusername/CameraTorchController
-issueTracker=https://github.com/yourusername/CameraTorchController/issues
+sourceCode=https://github.com/KisekiSamurai/CameraTorchController
+issueTracker=https://github.com/KisekiSamurai/CameraTorchController/issues

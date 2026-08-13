@@ -64,7 +64,7 @@
         <Preference
             android:key="developer_info"
             android:title="开发者"
-            android:summary="CameraTorchController Team"
+            android:summary="Kiseki"
             android:selectable="false"
             app:iconSpaceReserved="false"/>
 

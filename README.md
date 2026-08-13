@@ -40,7 +40,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/yourusername/CameraTorchController.git
+git clone https://github.com/KisekiSamurai/CameraTorchController.git
 
 # 进入项目目录
 cd CameraTorchController
