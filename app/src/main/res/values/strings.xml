@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">相机手电筒控制器</string>
+    <string name="module_description">相机启动自动开启手电筒，通知栏一键关闭</string>
+
+    <!-- 设置界面字符串 -->
+    <string name="pref_enabled_title">启用模块</string>
+    <string name="pref_enabled_summary">开启后相机启动时自动开启手电筒</string>
+
+    <string name="pref_auto_close_title">关闭手电筒时同时关闭相机</string>
+    <string name="pref_auto_close_summary">点击通知关闭手电筒时，同时退出相机应用</string>
+
+    <!-- 通知字符串 -->
+    <string name="notification_title">📸 相机手电筒已开启</string>
+    <string name="notification_text">闪光灯常亮中 - 点击关闭</string>
+    <string name="notification_action">关闭手电筒</string>
+
+    <!-- 手电筒模式 -->
+    <string name="torch_mode_entries">常亮模式|闪烁模式|定时模式</string>
+    <string name="torch_mode_values">always_on|blinking|timed</string>
+
+    <!-- 错误消息 -->
+    <string name="error_flashlight_not_supported">设备不支持闪光灯</string>
+    <string name="error_camera_access_denied">相机访问被拒绝</string>
+    <string name="error_notification_permission">需要通知权限</string>
+</resources>

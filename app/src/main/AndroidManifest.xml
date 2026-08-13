@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.cameratorch">
+
+    <!-- 权限声明 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- 声明需要闪光灯硬件功能 -->
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CameraTorch"
+        tools:targetApi="33">
+
+        <!-- 设置界面Activity -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.CameraTorch">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- 关闭手电筒广播接收器 -->
+        <receiver
+            android:name=".CloseFlashlightReceiver"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.example.cameratorch.ACTION_CLOSE_FLASHLIGHT"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- Lsposed模块元数据 -->
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true"/>
+
+        <meta-data
+            android:name="xposeddescription"
+            android:value="@string/module_description"/>
+
+        <meta-data
+            android:name="xposedminversion"
+            android:value="93"/>
+
+        <meta-data
+            android:name="xposedscope"
+            android:resource="@array/xposed_scope"/>
+
+        <!-- Lsposed模块信息（可选） -->
+        <meta-data
+            android:name="xposedsharedprefs"
+            android:value="true"/>
+
+    </application>
+
+</manifest>

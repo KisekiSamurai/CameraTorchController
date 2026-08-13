@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:key="camera_torch_settings"
+    android:title="相机手电筒控制器">
+
+    <PreferenceCategory
+        android:key="category_general"
+        android:title="基本设置">
+
+        <SwitchPreference
+            android:key="enabled"
+            android:title="启用模块"
+            android:summary="开启后相机启动时自动开启手电筒"
+            android:defaultValue="true"
+            android:icon="@drawable/ic_flashlight"
+            app:iconSpaceReserved="false"/>
+
+        <SwitchPreference
+            android:key="auto_close_camera"
+            android:title="关闭手电筒时同时关闭相机"
+            android:summary="点击通知关闭手电筒时，同时退出相机应用"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_power"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_advanced"
+        android:title="高级设置">
+
+        <ListPreference
+            android:key="torch_mode"
+            android:title="手电筒模式"
+            android:summary="选择手电筒开启模式"
+            android:entries="@array/torch_mode_entries"
+            android:entryValues="@array/torch_mode_values"
+            android:defaultValue="always_on"
+            android:dialogTitle="选择手电筒模式"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
+            android:key="auto_close_delay"
+            android:title="自动关闭延迟"
+            android:summary="设置手电筒自动关闭的延迟时间（秒）"
+            android:defaultValue="0"
+            android:dialogTitle="设置延迟时间"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_info"
+        android:title="关于">
+
+        <Preference
+            android:key="version_info"
+            android:title="版本信息"
+            android:summary="v1.0.0 (1)"
+            android:selectable="false"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            android:key="developer_info"
+            android:title="开发者"
+            android:summary="CameraTorchController Team"
+            android:selectable="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

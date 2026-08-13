@@ -1,0 +1,23 @@
+# 模块基本信息
+name=CameraTorchController
+version=1.0
+versionCode=1
+author=CameraTorchController Team
+description=相机启动自动开启手电筒，通知栏一键关闭
+updateUrl=https://github.com/yourusername/CameraTorchController/releases
+
+# 兼容性信息
+minLsposedVersion=1.9.0
+minAndroidVersion=8.0
+maxAndroidVersion=14.0
+
+# 功能标签
+category=工具
+tags=相机,手电筒,自动化,通知
+
+# 许可证
+license=GPL-3.0
+
+# 项目链接
+sourceCode=https://github.com/yourusername/CameraTorchController
+issueTracker=https://github.com/yourusername/CameraTorchController/issues
