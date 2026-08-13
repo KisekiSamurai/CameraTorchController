@@ -1,11 +1,11 @@
 package com.example.cameratorch;
 
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,24 +15,23 @@ public class SettingsActivity extends PreferenceActivity {
         setTitle("相机手电筒控制器设置");
 
         // 加载偏好设置Fragment
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
             .replace(android.R.id.content, new SettingsFragment())
             .commit();
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        private SwitchPreference enabledPref;
-        private SwitchPreference autoClosePref;
+        private SwitchPreferenceCompat enabledPref;
+        private SwitchPreferenceCompat autoClosePref;
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.preferences);
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.preferences, rootKey);
 
             // 获取偏好设置项
-            enabledPref = (SwitchPreference) findPreference(Constants.KEY_ENABLED);
-            autoClosePref = (SwitchPreference) findPreference(Constants.KEY_AUTO_CLOSE_CAMERA);
+            enabledPref = findPreference(Constants.KEY_ENABLED);
+            autoClosePref = findPreference(Constants.KEY_AUTO_CLOSE_CAMERA);
 
             // 设置监听器
             setupPreferenceListeners();
