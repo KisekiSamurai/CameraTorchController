@@ -62,15 +62,12 @@ public class CloseFlashlightReceiver extends BroadcastReceiver {
         try {
             Class<?> activityThread = Class.forName("android.app.ActivityThread");
             Object currentActivityThread = activityThread.getMethod("currentActivityThread").invoke(null);
-            Object activities = activityThread.getMethod("mActivities").get(currentActivityThread);
+            java.lang.reflect.Field activitiesField = activityThread.getDeclaredField("mActivities");
+            activitiesField.setAccessible(true);
+            java.util.Map<?, ?> activities = (java.util.Map<?, ?>) activitiesField.get(currentActivityThread);
 
             if (activities != null) {
-                java.lang.reflect.Field field = activities.getClass().getDeclaredField("mActivities");
-                field.setAccessible(true);
-                java.util.ArrayMap<?, ?> activityMap = (java.util.ArrayMap<?, ?>) field.get(activities);
-
-                for (int i = activityMap.size() - 1; i >= 0; i--) {
-                    Object record = activityMap.valueAt(i);
+                for (Object record : activities.values()) {
                     if (record != null) {
                         java.lang.reflect.Field pausedField = record.getClass().getDeclaredField("paused");
                         pausedField.setAccessible(true);

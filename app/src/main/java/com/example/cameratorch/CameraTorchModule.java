@@ -3,6 +3,7 @@ package com.example.cameratorch;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -123,10 +124,10 @@ public class CameraTorchModule implements IXposedHookLoadPackage {
     private boolean isFlashlightSupported() {
         try {
             if (cameraManager != null && currentCameraId != null) {
-                CameraManager.CameraCharacteristics characteristics =
+                CameraCharacteristics characteristics =
                     cameraManager.getCameraCharacteristics(currentCameraId);
                 Boolean flashAvailable = characteristics.get(
-                    android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                    CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 return flashAvailable != null && flashAvailable;
             }
         } catch (CameraAccessException e) {
